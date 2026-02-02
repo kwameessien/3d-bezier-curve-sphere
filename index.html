@@ -10,29 +10,37 @@
     <div class="controls">
         <form id="bezier-form">
             <div class="input-group">
-                <label for="latitudeA">latA:</label>
-                <input type="number" id="latitudeA" step="0.01" value="0" min="-90" max="90">
+                <label for="latitudeA">lat A:</label>
+                <input type="number" id="latitudeA" step="0.01" value="0" min="-90" max="90" aria-label="Point A latitude">
             </div>
             <div class="input-group">
-                <label for="longitudeA">lonA:</label>
-                <input type="number" id="longitudeA" step="0.01" value="0" min="-180" max="180">
+                <label for="longitudeA">lon A:</label>
+                <input type="number" id="longitudeA" step="0.01" value="0" min="-180" max="180" aria-label="Point A longitude">
             </div>
             <div class="input-group">
-                <label for="latitudeB">latB:</label>
-                <input type="number" id="latitudeB" step="0.01" value="45" min="-90" max="90">
+                <label for="latitudeB">lat B:</label>
+                <input type="number" id="latitudeB" step="0.01" value="45" min="-90" max="90" aria-label="Point B latitude">
             </div>
             <div class="input-group">
-                <label for="longitudeB">lonB:</label>
-                <input type="number" id="longitudeB" step="0.01" value="45" min="-180" max="180">
+                <label for="longitudeB">lon B:</label>
+                <input type="number" id="longitudeB" step="0.01" value="45" min="-180" max="180" aria-label="Point B longitude">
             </div>
-            <button type="button" id="add-bezier">get coordinates</button>
-            <button type="button" id="start">draw bezier curve</button>
+            <button type="button" id="draw-curve">Draw curve</button>
+            <button type="button" id="clear-curves">Clear curves</button>
+            <button type="button" id="pause-rotation" aria-pressed="false">Pause rotation</button>
         </form>
+        <div class="presets">
+            <span class="presets-label">Presets:</span>
+            <button type="button" class="preset" data-lat-a="40.71" data-lon-a="-74.01" data-lat-b="51.51" data-lon-b="-0.13">NYC → London</button>
+            <button type="button" class="preset" data-lat-a="0" data-lon-a="0" data-lat-b="0" data-lon-b="90">Equator 0°→90°</button>
+            <button type="button" class="preset" data-lat-a="-33.87" data-lon-a="151.21" data-lat-b="35.68" data-lon-b="139.69">Sydney → Tokyo</button>
+        </div>
+        <div id="message" class="message" aria-live="polite"></div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three-orbitcontrols@2.110.1/OrbitControls.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
-

@@ -49,36 +49,70 @@
     init: function() {
       var scope = this; // Preserve 'this' context for use in event handlers
       
-      // Initialize the Three.js scene with sphere, camera, lights, etc.
-      scope.view.initThreeDimentionalScene();
+      // Initialize the Three.js scene with sphere, camera, lights, OrbitControls, etc.
+      scope.view.initThreeDimensionalScene();
       
       // Start the continuous rendering/animation loop
       scope.view.render();
       
-      // Event handler for "Add Bezier" button - calculates 3D coordinates from geographic input
-      $('#add-bezier').on('click', function(event){
-        console.log($(this).parent());
-        var formElm = $(this).parent(); // Get the parent form element
-        
-        // Extract latitude and longitude values from the form inputs
-        var latA = formElm.find('#latitudeA').val(); // Starting point latitude
-        var lonA = formElm.find('#longitudeA').val(); // Starting point longitude
-        var latB = formElm.find('#latitudeB').val(); // Ending point latitude
-        var lonB = formElm.find('#longitudeB').val(); // Ending point longitude
-        
-        // Calculate 3D spatial coordinates from geographic coordinates
-        // This converts lat/lon to x/y/z positions on the sphere's surface
-        scope.model.calcSpatialCoordinate(latA, lonA, latB, lonB);
+      // Show or clear message in the UI
+      function showMessage(text, isError) {
+        var el = $('#message');
+        el.text(text).toggleClass('error', !!isError);
+      }
+      
+      // Parse and validate lat/lon; returns { valid: boolean, latA, lonA, latB, lonB } with clamped numbers
+      function getValidatedCoordinates() {
+        var latA = parseFloat($('#latitudeA').val(), 10);
+        var lonA = parseFloat($('#longitudeA').val(), 10);
+        var latB = parseFloat($('#latitudeB').val(), 10);
+        var lonB = parseFloat($('#longitudeB').val(), 10);
+        if (isNaN(latA) || isNaN(lonA) || isNaN(latB) || isNaN(lonB)) {
+          return { valid: false };
+        }
+        latA = Math.max(-90, Math.min(90, latA));
+        lonA = Math.max(-180, Math.min(180, lonA));
+        latB = Math.max(-90, Math.min(90, latB));
+        lonB = Math.max(-180, Math.min(180, lonB));
+        return { valid: true, latA: latA, lonA: lonA, latB: latB, lonB: lonB };
+      }
+      
+      // Single "Draw curve" button: validate, compute coordinates, draw
+      $('#draw-curve').on('click', function() {
+        var coords = getValidatedCoordinates();
+        if (!coords.valid) {
+          showMessage('Please enter valid numbers for all coordinates.', true);
+          return;
+        }
+        showMessage('');
+        scope.model.calcSpatialCoordinate(coords.latA, coords.lonA, coords.latB, coords.lonB);
+        scope.view.addBezierCurve(scope.model.spaceCoordinatesDataBox);
       });
       
-      // Event handler for "Start" button - draws the Bezier curve on the sphere
-      $('#start').on('click', function(){
-        // Retrieve the calculated 3D coordinates from the model
-        var coordinatesData = scope.model.spaceCoordinatesDataBox;
-        console.log(coordinatesData );
-        
-        // Add the Bezier curve visualization to the 3D scene
-        scope.view.addBezierCurve(coordinatesData);
+      $('#clear-curves').on('click', function() {
+        scope.view.clearCurves();
+        showMessage('');
+      });
+      
+      $('#pause-rotation').on('click', function() {
+        scope.view.rotationPaused = !scope.view.rotationPaused;
+        var $btn = $(this);
+        $btn.text(scope.view.rotationPaused ? 'Resume rotation' : 'Pause rotation');
+        $btn.attr('aria-pressed', scope.view.rotationPaused);
+      });
+      
+      // Preset buttons: fill inputs and draw curve
+      $('.preset').on('click', function() {
+        var $t = $(this);
+        $('#latitudeA').val($t.data('lat-a'));
+        $('#longitudeA').val($t.data('lon-a'));
+        $('#latitudeB').val($t.data('lat-b'));
+        $('#longitudeB').val($t.data('lon-b'));
+        var coords = getValidatedCoordinates();
+        if (!coords.valid) return;
+        showMessage('');
+        scope.model.calcSpatialCoordinate(coords.latA, coords.lonA, coords.latB, coords.lonB);
+        scope.view.addBezierCurve(scope.model.spaceCoordinatesDataBox);
       });
     }
   }
@@ -90,10 +124,13 @@
    * Handles scene setup, camera control, animation, and drawing Bezier curves.
    */
   function SonicPlayerView() {
-    this.scene = null;        // Three.js scene container for all 3D objects
-    this.camera = null;       // Camera that defines the viewing perspective
-    this.renderer = null;     // WebGL renderer that draws the scene
-    this.isAnimating = false; // Flag to track if animation loop is running
+    this.scene = null;           // Three.js scene container for all 3D objects
+    this.camera = null;          // Camera that defines the viewing perspective
+    this.renderer = null;        // WebGL renderer that draws the scene
+    this.controls = null;        // OrbitControls for drag/zoom
+    this.isAnimating = false;    // Flag to track if animation loop is running
+    this.curveMeshes = [];       // All curve meshes for clear/dispose
+    this.rotationPaused = false; // When true, auto-rotation is paused
   }
   
   SonicPlayerView.prototype = {
@@ -106,7 +143,7 @@
      * - Lighting for shadows
      * - Window resize handler
      */
-    initThreeDimentionalScene: function(){
+    initThreeDimensionalScene: function(){
       // Create a 3D scene container that will hold all objects
       this.scene = new THREE.Scene();
 
@@ -140,6 +177,11 @@
       this.camera.position.z = 100;
       this.camera.lookAt(this.scene.position); // Point camera at scene center (0,0,0)
 
+      // OrbitControls: drag to rotate, scroll to zoom
+      if (typeof THREE.OrbitControls !== 'undefined') {
+        this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+      }
+
       // Add a white spotlight to illuminate the scene and create shadows
       var spotLight = new THREE.SpotLight(0xffffff);
       spotLight.position.set(500, 500, 1000); // Position light far from scene
@@ -171,24 +213,36 @@
         this.isAnimating = true;
       }
       
-      // Rotation speed in radians per frame (small value for smooth rotation)
-      var rotSpeed = 0.01;
+      // Auto-rotate camera when not paused
+      if (!this.rotationPaused) {
+        var rotSpeed = 0.01;
+        this.camera.position.x = this.camera.position.x * Math.cos(rotSpeed) + this.camera.position.z * Math.sin(rotSpeed);
+        this.camera.position.z = this.camera.position.z * Math.cos(rotSpeed) - this.camera.position.x * Math.sin(rotSpeed);
+        this.camera.lookAt(this.scene.position);
+      }
       
-      // Rotate camera around the Y-axis (vertical axis) using rotation matrix math:
-      // This creates a circular orbit around the scene center
-      // x' = x*cos(θ) + z*sin(θ)
-      // z' = z*cos(θ) - x*sin(θ)
-      this.camera.position.x = this.camera.position.x * Math.cos(rotSpeed) + this.camera.position.z * Math.sin(rotSpeed);
-      this.camera.position.z = this.camera.position.z * Math.cos(rotSpeed) - this.camera.position.x * Math.sin(rotSpeed);
-      
-      // Always point camera at the center of the scene
-      this.camera.lookAt(this.scene.position);
+      if (this.controls) {
+        this.controls.update();
+      }
       
       // Schedule the next frame render (creates continuous animation loop)
       requestAnimationFrame(this.render.bind(this));
       
       // Render the scene from the camera's perspective
       this.renderer.render(this.scene, this.camera);
+    },
+    
+    /**
+     * Removes all Bezier curves from the scene and disposes their geometry and material.
+     */
+    clearCurves: function() {
+      for (var i = 0; i < this.curveMeshes.length; i++) {
+        var mesh = this.curveMeshes[i];
+        this.scene.remove(mesh);
+        if (mesh.geometry) mesh.geometry.dispose();
+        if (mesh.material) mesh.material.dispose();
+      }
+      this.curveMeshes = [];
     },
     
     /**
@@ -210,42 +264,23 @@
      *   - v2x, v2y, v2z: Ending point (second geographic coordinate on sphere)
      */
     addBezierCurve: function(coordinatesData){
-      // Number of line segments to approximate the smooth Bezier curve
-      // Higher values = smoother curve but more geometry
-      var SUBDIVISIONS = 20;
-      
-      // Create a geometry to hold the curve's vertex data
-      var geometry = new THREE.BufferGeometry();
-      var points = [];
-      
-      // Create a quadratic Bezier curve with three control points:
-      // v0: Start point (on sphere surface)
-      // v1: Control point (outside sphere, creates the arc)
-      // v2: End point (on sphere surface)
+      // Create a quadratic Bezier curve with three control points
       var quadraticCurve = new THREE.QuadraticBezierCurve3(
         new THREE.Vector3(coordinatesData.v0x, coordinatesData.v0y, coordinatesData.v0z),
         new THREE.Vector3(coordinatesData.v1x, coordinatesData.v1y, coordinatesData.v1z),
         new THREE.Vector3(coordinatesData.v2x, coordinatesData.v2y, coordinatesData.v2z)
       );
       
-      // Sample points along the Bezier curve at regular intervals
-      // This creates a series of points that approximate the smooth curve
-      for (var i = 0; i <= SUBDIVISIONS; i++) {
-        // Get point at position t (0.0 to 1.0) along the curve
-        points.push(quadraticCurve.getPoint(i / SUBDIVISIONS));
-      }
+      // Use TubeGeometry for a visible thick curve (LineBasicMaterial linewidth is not reliable in WebGL)
+      var tubeRadius = 0.4;
+      var tubularSegments = 32;
+      var radialSegments = 8;
+      var geometry = new THREE.TubeGeometry(quadraticCurve, tubularSegments, tubeRadius, radialSegments, false);
+      var material = new THREE.MeshLambertMaterial({ color: 0xEE4950 });
+      var tube = new THREE.Mesh(geometry, material);
       
-      // Convert the array of points into geometry vertices
-      geometry.setFromPoints(points);
-      
-      // Create a red line material for the curve
-      var material = new THREE.LineBasicMaterial( { color: 0xEE4950, linewidth: 5} );
-      
-      // Create a line object from the geometry and material
-      var line = new THREE.Line(geometry, material);
-      
-      // Add the curve to the scene so it's visible
-      this.scene.add(line);
+      this.scene.add(tube);
+      this.curveMeshes.push(tube);
     }
   }
 
@@ -304,7 +339,6 @@
     calcSpatialCoordinate: function(latitudeA, longitudeA, latitudeB, longitudeB) {
       // Sphere radius (must match the sphere geometry radius in the view)
       var radius = 20;
-      console.log(this);
 
       // Convert starting point (A) from geographic to 3D Cartesian coordinates
       // Using spherical coordinate conversion:
@@ -358,8 +392,6 @@
       this.spaceCoordinatesDataBox.v2x = v2x;
       this.spaceCoordinatesDataBox.v2y = v2y;
       this.spaceCoordinatesDataBox.v2z = v2z;
-
-      console.log(this.spaceCoordinatesDataBox);
     }
   }
   

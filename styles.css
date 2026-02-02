@@ -16,12 +16,14 @@ body {
     transform: translateX(-50%);
     background: rgba(255, 255, 255, 0.95);
     padding: 15px 20px;
-    border-radius: 4px;
+    border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     z-index: 1000;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
+    max-width: 96vw;
 }
 
 #bezier-form {
@@ -80,15 +82,42 @@ button:active {
     background-color: #c0c0c0;
 }
 
-#start {
-    background-color: #e0e0e0;
+.presets {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
-#start:hover {
-    background-color: #d0d0d0;
+.presets-label {
+    color: #333;
+    font-size: 13px;
+    white-space: nowrap;
 }
 
-#start:active {
+.preset {
+    padding: 6px 12px;
+    font-size: 13px;
+    background-color: #e8f0fe;
+    border-color: #aecbfa;
+}
+
+.preset:hover {
+    background-color: #d2e3fc;
+}
+
+#pause-rotation[aria-pressed="true"] {
     background-color: #c0c0c0;
+    border-color: #999;
+}
+
+.message {
+    font-size: 13px;
+    color: #333;
+    min-height: 1.2em;
+}
+
+.message.error {
+    color: #c00;
 }
 
