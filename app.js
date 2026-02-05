@@ -114,6 +114,78 @@
         scope.model.calcSpatialCoordinate(coords.latA, coords.lonA, coords.latB, coords.lonB);
         scope.view.addBezierCurve(scope.model.spaceCoordinatesDataBox);
       });
+      
+      // Apply settings when user clicks Apply on Settings page
+      document.body.addEventListener('bezierApplySettings', function(e) {
+        if (e.detail) scope.view.applySettings(e.detail);
+      });
+      
+      // Saved routes (localStorage key: bezierSavedRoutes)
+      var SAVED_ROUTES_KEY = 'bezierSavedRoutes';
+      function getSavedRoutes() {
+        try {
+          var list = JSON.parse(localStorage.getItem(SAVED_ROUTES_KEY) || '[]');
+          return Array.isArray(list) ? list : [];
+        } catch (_) { return []; }
+      }
+      function saveSavedRoutes(list) {
+        localStorage.setItem(SAVED_ROUTES_KEY, JSON.stringify(list));
+      }
+      function renderSavedRoutesList() {
+        var list = getSavedRoutes();
+        var html = list.length === 0
+          ? '<li class="saved-routes-empty">No saved routes yet.</li>'
+          : list.map(function(r) {
+              return '<li class="saved-route-item" data-id="' + r.id + '">' +
+                '<span class="saved-route-name">' + escapeHtml(r.name || 'Unnamed') + '</span> ' +
+                '<button type="button" class="saved-route-load">Load</button> ' +
+                '<button type="button" class="saved-route-delete">Delete</button></li>';
+            }).join('');
+        $('#saved-routes-list').html(html);
+      }
+      function escapeHtml(s) {
+        var div = document.createElement('div');
+        div.textContent = s;
+        return div.innerHTML;
+      }
+      renderSavedRoutesList();
+      $('#save-route').on('click', function() {
+        var name = $.trim($('#saved-route-name').val()) || 'Route ' + (getSavedRoutes().length + 1);
+        var coords = getValidatedCoordinates();
+        if (!coords.valid) {
+          showMessage('Enter valid coordinates first, then save.', true);
+          return;
+        }
+        var list = getSavedRoutes();
+        list.push({
+          id: Date.now(),
+          name: name,
+          latA: coords.latA, lonA: coords.lonA,
+          latB: coords.latB, lonB: coords.lonB
+        });
+        saveSavedRoutes(list);
+        renderSavedRoutesList();
+        $('#saved-route-name').val('');
+        showMessage('Route saved.');
+      });
+      $('#saved-routes-list').on('click', '.saved-route-load', function() {
+        var id = parseFloat($(this).closest('.saved-route-item').data('id'), 10);
+        var list = getSavedRoutes();
+        var r = list.filter(function(x) { return x.id === id; })[0];
+        if (!r) return;
+        $('#latitudeA').val(r.latA); $('#longitudeA').val(r.lonA);
+        $('#latitudeB').val(r.latB); $('#longitudeB').val(r.lonB);
+        showMessage('');
+        scope.model.calcSpatialCoordinate(r.latA, r.lonA, r.latB, r.lonB);
+        scope.view.addBezierCurve(scope.model.spaceCoordinatesDataBox);
+      });
+      $('#saved-routes-list').on('click', '.saved-route-delete', function() {
+        var id = parseFloat($(this).closest('.saved-route-item').data('id'), 10);
+        var list = getSavedRoutes().filter(function(x) { return x.id !== id; });
+        saveSavedRoutes(list);
+        renderSavedRoutesList();
+        showMessage('');
+      });
     }
   }
 
@@ -128,9 +200,13 @@
     this.camera = null;          // Camera that defines the viewing perspective
     this.renderer = null;        // WebGL renderer that draws the scene
     this.controls = null;        // OrbitControls for drag/zoom
+    this.sphereMaterial = null;  // Reference to sphere material for opacity
     this.isAnimating = false;    // Flag to track if animation loop is running
     this.curveMeshes = [];       // All curve meshes for clear/dispose
     this.rotationPaused = false; // When true, auto-rotation is paused
+    this.rotationSpeed = 0.01;   // Camera orbit speed (configurable)
+    this.tubeRadius = 0.4;       // Curve thickness (configurable)
+    this.curveColor = 0xEE4950;  // Curve color hex (configurable)
   }
   
   SonicPlayerView.prototype = {
@@ -165,7 +241,18 @@
       
       // Create a semi-transparent blue material for the sphere
       var material = new THREE.MeshLambertMaterial({color: 0x1E60EE, transparent: true});
-      material.opacity = 0.6; // 60% opacity to see through the sphere
+      this.sphereMaterial = material;
+      // Apply saved settings or defaults
+      try {
+        var s = JSON.parse(localStorage.getItem('bezierVisualizerSettings') || '{}');
+        if (s.opacity != null) material.opacity = s.opacity;
+        else material.opacity = 0.6;
+        if (s.tubeRadius != null) this.tubeRadius = s.tubeRadius;
+        if (s.curveColor != null) this.curveColor = parseInt(s.curveColor.replace(/^#/, ''), 16);
+        if (s.rotationSpeed != null) this.rotationSpeed = s.rotationSpeed;
+      } catch (_) {
+        material.opacity = 0.6;
+      }
       
       // Combine geometry and material into a mesh (3D object)
       var sphere = new THREE.Mesh(sphereGeometry, material);
@@ -215,7 +302,7 @@
       
       // Auto-rotate camera when not paused
       if (!this.rotationPaused) {
-        var rotSpeed = 0.01;
+        var rotSpeed = this.rotationSpeed;
         this.camera.position.x = this.camera.position.x * Math.cos(rotSpeed) + this.camera.position.z * Math.sin(rotSpeed);
         this.camera.position.z = this.camera.position.z * Math.cos(rotSpeed) - this.camera.position.x * Math.sin(rotSpeed);
         this.camera.lookAt(this.scene.position);
@@ -271,16 +358,30 @@
         new THREE.Vector3(coordinatesData.v2x, coordinatesData.v2y, coordinatesData.v2z)
       );
       
-      // Use TubeGeometry for a visible thick curve (LineBasicMaterial linewidth is not reliable in WebGL)
-      var tubeRadius = 0.4;
+      // Use TubeGeometry for a visible thick curve (configurable radius and color)
       var tubularSegments = 32;
       var radialSegments = 8;
-      var geometry = new THREE.TubeGeometry(quadraticCurve, tubularSegments, tubeRadius, radialSegments, false);
-      var material = new THREE.MeshLambertMaterial({ color: 0xEE4950 });
+      var geometry = new THREE.TubeGeometry(quadraticCurve, tubularSegments, this.tubeRadius, radialSegments, false);
+      var material = new THREE.MeshLambertMaterial({ color: this.curveColor });
       var tube = new THREE.Mesh(geometry, material);
       
       this.scene.add(tube);
       this.curveMeshes.push(tube);
+    },
+    /**
+     * Applies settings from the Settings page (opacity, curve thickness/color, rotation speed).
+     * @param {Object} settings - { opacity, tubeRadius, curveColor, rotationSpeed }
+     */
+    applySettings: function(settings) {
+      if (settings.opacity != null && this.sphereMaterial) {
+        this.sphereMaterial.opacity = settings.opacity;
+      }
+      if (settings.tubeRadius != null) this.tubeRadius = settings.tubeRadius;
+      if (settings.curveColor != null) {
+        this.curveColor = typeof settings.curveColor === 'string'
+          ? parseInt(settings.curveColor.replace(/^#/, ''), 16) : settings.curveColor;
+      }
+      if (settings.rotationSpeed != null) this.rotationSpeed = settings.rotationSpeed;
     }
   }
 
