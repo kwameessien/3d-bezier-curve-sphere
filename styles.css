@@ -85,27 +85,23 @@ body {
     box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.2);
 }
 
-/* ----- Page switching ----- */
-.page {
-    display: none;
+/* ----- Main visualizer (index.html) ----- */
+#visualizer-page {
     position: fixed;
     top: 56px;
     left: 0;
     right: 0;
     bottom: 0;
-}
-
-.page.active {
-    display: block;
-}
-
-#visualizer-page.active {
     overflow: hidden;
 }
 
-/* About & Settings: match visualizer + header (dark slate, glass panel) */
-#about-page,
-#settings-page {
+/* ----- About & Settings (separate HTML files) ----- */
+.secondary-page {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    bottom: 0;
     overflow: auto;
     background: #020617;
     background-image:
@@ -114,8 +110,7 @@ body {
         linear-gradient(180deg, #0f172a 0%, #020617 40%, #0f172a 100%);
 }
 
-#about-page .about-content,
-#settings-page .settings-content {
+.secondary-page .about-content {
     padding-bottom: 52px;
 }
 
@@ -178,6 +173,34 @@ body {
     font-size: 0.88em;
     border: 1px solid rgba(255, 255, 255, 0.08);
     font-family: ui-monospace, 'Cascadia Code', 'Segoe UI Mono', monospace;
+}
+
+.about-content a {
+    color: #7dd3fc;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.about-content a:hover {
+    color: #bae6fd;
+    text-decoration: underline;
+}
+
+.settings-intro {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.settings-intro a {
+    color: #7dd3fc;
+    text-decoration: none;
+}
+
+.settings-intro a:hover {
+    text-decoration: underline;
+    color: #bae6fd;
 }
 
 /* ----- Visualizer controls (below header) ----- */

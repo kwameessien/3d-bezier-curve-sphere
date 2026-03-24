@@ -11,108 +11,64 @@
 </head>
 <body>
     <header class="site-header">
-        <a href="#" class="site-title">3D Bezier Visualizer</a>
+        <a href="index.html" class="site-title">3D Bezier Visualizer</a>
         <nav class="main-nav" aria-label="Main navigation">
-            <a href="#visualizer" class="nav-link active" data-page="visualizer">Visualizer</a>
-            <a href="#about" class="nav-link" data-page="about">About</a>
-            <a href="#settings" class="nav-link" data-page="settings">Settings</a>
+            <a href="index.html" class="nav-link active" aria-current="page">Visualizer</a>
+            <a href="about.html" class="nav-link">About</a>
+            <a href="settings.html" class="nav-link">Settings</a>
         </nav>
     </header>
 
-    <main id="visualizer-page" class="page active">
-    <div class="controls">
-        <form id="bezier-form">
-            <div class="input-group">
-                <label for="latitudeA">lat A:</label>
-                <input type="number" id="latitudeA" step="0.01" value="0" min="-90" max="90" aria-label="Point A latitude">
-            </div>
-            <div class="input-group">
-                <label for="longitudeA">lon A:</label>
-                <input type="number" id="longitudeA" step="0.01" value="0" min="-180" max="180" aria-label="Point A longitude">
-            </div>
-            <div class="input-group">
-                <label for="latitudeB">lat B:</label>
-                <input type="number" id="latitudeB" step="0.01" value="45" min="-90" max="90" aria-label="Point B latitude">
-            </div>
-            <div class="input-group">
-                <label for="longitudeB">lon B:</label>
-                <input type="number" id="longitudeB" step="0.01" value="45" min="-180" max="180" aria-label="Point B longitude">
-            </div>
-            <button type="button" id="draw-curve">Draw curve</button>
-            <button type="button" id="clear-curves">Clear curves</button>
-            <button type="button" id="pause-rotation" aria-pressed="false">Pause rotation</button>
-        </form>
-        <div class="presets">
-            <span class="presets-label">Presets:</span>
-            <button type="button" class="preset" data-lat-a="40.71" data-lon-a="-74.01" data-lat-b="51.51" data-lon-b="-0.13">NYC → London</button>
-            <button type="button" class="preset" data-lat-a="0" data-lon-a="0" data-lat-b="0" data-lon-b="90">Equator 0°→90°</button>
-            <button type="button" class="preset" data-lat-a="-33.87" data-lon-a="151.21" data-lat-b="35.68" data-lon-b="139.69">Sydney → Tokyo</button>
-            <button type="button" class="preset" data-lat-a="48.86" data-lon-a="2.35" data-lat-b="35.68" data-lon-b="139.69">Paris → Tokyo</button>
-            <button type="button" class="preset" data-lat-a="-90" data-lon-a="0" data-lat-b="90" data-lon-b="0">Pole to pole</button>
-            <button type="button" class="preset" data-lat-a="34.05" data-lon-a="-118.24" data-lat-b="40.71" data-lon-b="-74.01">LA → NYC</button>
-        </div>
-        <div class="saved-routes">
-            <span class="presets-label">Saved routes:</span>
-            <div class="saved-routes-row">
-                <input type="text" id="saved-route-name" placeholder="Route name" aria-label="Name for saved route">
-                <button type="button" id="save-route">Save current</button>
-            </div>
-            <ul id="saved-routes-list" class="saved-routes-list"></ul>
-        </div>
-        <button type="button" id="how-to-use-toggle" class="how-to-use-toggle" aria-expanded="false">How to use</button>
-        <div id="how-to-use-panel" class="how-to-use-panel" hidden>
-            <ol>
-                <li>Enter latitude and longitude for <strong>Point A</strong> and <strong>Point B</strong>.</li>
-                <li>Click <strong>Draw curve</strong> to render the arc on the sphere.</li>
-                <li><strong>Drag</strong> to rotate the globe, <strong>scroll</strong> to zoom.</li>
-                <li>Use <strong>Presets</strong> or <strong>Saved routes</strong> for quick examples.</li>
-            </ol>
-        </div>
-        <div id="message" class="message" aria-live="polite"></div>
-    </div>
-    </main>
-
-    <main id="about-page" class="page" aria-hidden="true">
-        <div class="about-content">
-            <h1>About</h1>
-            <p>This app draws <strong>Bezier curves</strong> on a 3D sphere using two geographic coordinates (latitude/longitude). Great for visualizing routes or arcs on a globe.</p>
-            <h2>How it works</h2>
-            <ul>
-                <li>You enter two points (lat/lon A and B).</li>
-                <li>Points are converted to 3D positions on the sphere surface.</li>
-                <li>A quadratic Bezier curve is drawn with a control point outside the sphere so the arc “bulges” between the two points.</li>
-                <li>Use <strong>OrbitControls</strong>: drag to rotate, scroll to zoom. Pause rotation to inspect the scene.</li>
-            </ul>
-            <h2>Tech</h2>
-            <p>Built with Three.js, OrbitControls, and jQuery. No build step — open <code>index.html</code> in a browser.</p>
-        </div>
-    </main>
-
-    <main id="settings-page" class="page" aria-hidden="true">
-        <div class="about-content settings-content">
-            <h1>Settings</h1>
-            <form id="settings-form">
-                <div class="setting-row">
-                    <label for="setting-opacity">Sphere opacity</label>
-                    <input type="range" id="setting-opacity" min="0.1" max="1" step="0.05" value="0.6">
-                    <span id="setting-opacity-value" class="setting-value">0.6</span>
+    <main id="visualizer-page">
+        <div class="controls">
+            <form id="bezier-form">
+                <div class="input-group">
+                    <label for="latitudeA">lat A:</label>
+                    <input type="number" id="latitudeA" step="0.01" value="0" min="-90" max="90" aria-label="Point A latitude">
                 </div>
-                <div class="setting-row">
-                    <label for="setting-tube-radius">Curve thickness</label>
-                    <input type="range" id="setting-tube-radius" min="0.2" max="1.2" step="0.1" value="0.4">
-                    <span id="setting-tube-radius-value" class="setting-value">0.4</span>
+                <div class="input-group">
+                    <label for="longitudeA">lon A:</label>
+                    <input type="number" id="longitudeA" step="0.01" value="0" min="-180" max="180" aria-label="Point A longitude">
                 </div>
-                <div class="setting-row">
-                    <label for="setting-curve-color">Curve color</label>
-                    <input type="color" id="setting-curve-color" value="#EE4950">
+                <div class="input-group">
+                    <label for="latitudeB">lat B:</label>
+                    <input type="number" id="latitudeB" step="0.01" value="45" min="-90" max="90" aria-label="Point B latitude">
                 </div>
-                <div class="setting-row">
-                    <label for="setting-rotation-speed">Rotation speed</label>
-                    <input type="range" id="setting-rotation-speed" min="0.002" max="0.03" step="0.002" value="0.01">
-                    <span id="setting-rotation-speed-value" class="setting-value">0.01</span>
+                <div class="input-group">
+                    <label for="longitudeB">lon B:</label>
+                    <input type="number" id="longitudeB" step="0.01" value="45" min="-180" max="180" aria-label="Point B longitude">
                 </div>
-                <button type="button" id="settings-apply">Apply</button>
+                <button type="button" id="draw-curve">Draw curve</button>
+                <button type="button" id="clear-curves">Clear curves</button>
+                <button type="button" id="pause-rotation" aria-pressed="false">Pause rotation</button>
             </form>
+            <div class="presets">
+                <span class="presets-label">Presets:</span>
+                <button type="button" class="preset" data-lat-a="40.71" data-lon-a="-74.01" data-lat-b="51.51" data-lon-b="-0.13">NYC → London</button>
+                <button type="button" class="preset" data-lat-a="0" data-lon-a="0" data-lat-b="0" data-lon-b="90">Equator 0°→90°</button>
+                <button type="button" class="preset" data-lat-a="-33.87" data-lon-a="151.21" data-lat-b="35.68" data-lon-b="139.69">Sydney → Tokyo</button>
+                <button type="button" class="preset" data-lat-a="48.86" data-lon-a="2.35" data-lat-b="35.68" data-lon-b="139.69">Paris → Tokyo</button>
+                <button type="button" class="preset" data-lat-a="-90" data-lon-a="0" data-lat-b="90" data-lon-b="0">Pole to pole</button>
+                <button type="button" class="preset" data-lat-a="34.05" data-lon-a="-118.24" data-lat-b="40.71" data-lon-b="-74.01">LA → NYC</button>
+            </div>
+            <div class="saved-routes">
+                <span class="presets-label">Saved routes:</span>
+                <div class="saved-routes-row">
+                    <input type="text" id="saved-route-name" placeholder="Route name" aria-label="Name for saved route">
+                    <button type="button" id="save-route">Save current</button>
+                </div>
+                <ul id="saved-routes-list" class="saved-routes-list"></ul>
+            </div>
+            <button type="button" id="how-to-use-toggle" class="how-to-use-toggle" aria-expanded="false">How to use</button>
+            <div id="how-to-use-panel" class="how-to-use-panel" hidden>
+                <ol>
+                    <li>Enter latitude and longitude for <strong>Point A</strong> and <strong>Point B</strong>.</li>
+                    <li>Click <strong>Draw curve</strong> to render the arc on the sphere.</li>
+                    <li><strong>Drag</strong> to rotate the globe, <strong>scroll</strong> to zoom.</li>
+                    <li>Use <strong>Presets</strong> or <strong>Saved routes</strong> for quick examples.</li>
+                </ol>
+            </div>
+            <div id="message" class="message" aria-live="polite"></div>
         </div>
     </main>
 
@@ -127,59 +83,7 @@
     <script src="app.js"></script>
     <script>
       (function() {
-        function showPage(pageId) {
-          $('.page').removeClass('active').attr('aria-hidden', 'true');
-          $('.nav-link').removeClass('active');
-          var $page = $('#' + pageId + '-page');
-          var $link = $('.nav-link[data-page="' + pageId + '"]');
-          $page.addClass('active').attr('aria-hidden', 'false');
-          $link.addClass('active');
-          if (window.location.hash !== '#' + pageId) {
-            window.location.hash = pageId;
-          }
-        }
-        function hashToPage() {
-          var hash = (window.location.hash || '#visualizer').slice(1);
-          if (hash === 'about') showPage('about');
-          else if (hash === 'settings') showPage('settings');
-          else showPage('visualizer');
-        }
-        function loadSettingsIntoForm() {
-          try {
-            var s = JSON.parse(localStorage.getItem('bezierVisualizerSettings') || '{}');
-            var o = s.opacity != null ? s.opacity : 0.6;
-            var r = s.tubeRadius != null ? s.tubeRadius : 0.4;
-            var c = s.curveColor != null ? s.curveColor : '#EE4950';
-            var sp = s.rotationSpeed != null ? s.rotationSpeed : 0.01;
-            $('#setting-opacity').val(o); $('#setting-opacity-value').text(o);
-            $('#setting-tube-radius').val(r); $('#setting-tube-radius-value').text(r);
-            $('#setting-curve-color').val(c);
-            $('#setting-rotation-speed').val(sp); $('#setting-rotation-speed-value').text(sp);
-          } catch (_) {}
-        }
         $(function() {
-          $('.nav-link').on('click', function(e) {
-            e.preventDefault();
-            var page = $(this).data('page');
-            showPage(page);
-            if (page === 'settings') loadSettingsIntoForm();
-          });
-          $(window).on('hashchange', hashToPage);
-          hashToPage();
-          if (window.location.hash === '#settings') loadSettingsIntoForm();
-          $('#setting-opacity').on('input', function() { $('#setting-opacity-value').text($(this).val()); });
-          $('#setting-tube-radius').on('input', function() { $('#setting-tube-radius-value').text($(this).val()); });
-          $('#setting-rotation-speed').on('input', function() { $('#setting-rotation-speed-value').text($(this).val()); });
-          $('#settings-apply').on('click', function() {
-            var settings = {
-              opacity: parseFloat($('#setting-opacity').val(), 10),
-              tubeRadius: parseFloat($('#setting-tube-radius').val(), 10),
-              curveColor: $('#setting-curve-color').val(),
-              rotationSpeed: parseFloat($('#setting-rotation-speed').val(), 10)
-            };
-            localStorage.setItem('bezierVisualizerSettings', JSON.stringify(settings));
-            document.body.dispatchEvent(new CustomEvent('bezierApplySettings', { detail: settings }));
-          });
           $('#how-to-use-toggle').on('click', function() {
             var expanded = $(this).attr('aria-expanded') === 'true';
             $(this).attr('aria-expanded', !expanded);

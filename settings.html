@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings — 3D Bezier Visualizer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <a href="index.html" class="site-title">3D Bezier Visualizer</a>
+        <nav class="main-nav" aria-label="Main navigation">
+            <a href="index.html" class="nav-link">Visualizer</a>
+            <a href="about.html" class="nav-link">About</a>
+            <a href="settings.html" class="nav-link active" aria-current="page">Settings</a>
+        </nav>
+    </header>
+
+    <main class="secondary-page">
+        <div class="about-content settings-content">
+            <h1>Settings</h1>
+            <p class="settings-intro">Changes are saved to your browser. Open the <a href="index.html">visualizer</a> to see them applied.</p>
+            <form id="settings-form">
+                <div class="setting-row">
+                    <label for="setting-opacity">Sphere opacity</label>
+                    <input type="range" id="setting-opacity" min="0.1" max="1" step="0.05" value="0.6">
+                    <span id="setting-opacity-value" class="setting-value">0.6</span>
+                </div>
+                <div class="setting-row">
+                    <label for="setting-tube-radius">Curve thickness</label>
+                    <input type="range" id="setting-tube-radius" min="0.2" max="1.2" step="0.1" value="0.4">
+                    <span id="setting-tube-radius-value" class="setting-value">0.4</span>
+                </div>
+                <div class="setting-row">
+                    <label for="setting-curve-color">Curve color</label>
+                    <input type="color" id="setting-curve-color" value="#EE4950">
+                </div>
+                <div class="setting-row">
+                    <label for="setting-rotation-speed">Rotation speed</label>
+                    <input type="range" id="setting-rotation-speed" min="0.002" max="0.03" step="0.002" value="0.01">
+                    <span id="setting-rotation-speed-value" class="setting-value">0.01</span>
+                </div>
+                <button type="button" id="settings-apply">Apply</button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <span>Built with <a href="https://threejs.org/" target="_blank" rel="noopener">Three.js</a></span>
+        <a href="README.md" target="_blank" rel="noopener">README</a>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="settings-page.js"></script>
+</body>
+</html>

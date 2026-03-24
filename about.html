@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About — 3D Bezier Visualizer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <a href="index.html" class="site-title">3D Bezier Visualizer</a>
+        <nav class="main-nav" aria-label="Main navigation">
+            <a href="index.html" class="nav-link">Visualizer</a>
+            <a href="about.html" class="nav-link active" aria-current="page">About</a>
+            <a href="settings.html" class="nav-link">Settings</a>
+        </nav>
+    </header>
+
+    <main class="secondary-page">
+        <div class="about-content">
+            <h1>About</h1>
+            <p>This app draws <strong>Bezier curves</strong> on a 3D sphere using two geographic coordinates (latitude/longitude). Great for visualizing routes or arcs on a globe.</p>
+            <h2>How it works</h2>
+            <ul>
+                <li>You enter two points (lat/lon A and B).</li>
+                <li>Points are converted to 3D positions on the sphere surface.</li>
+                <li>A quadratic Bezier curve is drawn with a control point outside the sphere so the arc “bulges” between the two points.</li>
+                <li>Use <strong>OrbitControls</strong>: drag to rotate, scroll to zoom. Pause rotation to inspect the scene.</li>
+            </ul>
+            <h2>Tech</h2>
+            <p>Built with Three.js, OrbitControls, and jQuery. No build step — open <code>index.html</code> in a browser.</p>
+            <p><a href="index.html" class="inline-back-link">← Back to visualizer</a></p>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <span>Built with <a href="https://threejs.org/" target="_blank" rel="noopener">Three.js</a></span>
+        <a href="README.md" target="_blank" rel="noopener">README</a>
+    </footer>
+</body>
+</html>

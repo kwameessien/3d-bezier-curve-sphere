@@ -13,9 +13,20 @@ A Three.js-based 3D visualization application that draws Bezier curves on a sphe
 - **Preset routes**: one-click examples (NYC → London, Equator, Sydney → Tokyo)
 - **Thick tube curves** for better visibility
 
+## Site structure
+
+| File | Purpose |
+|------|---------|
+| `index.html` | Main 3D visualizer (entry point) |
+| `about.html` | About / how it works |
+| `settings.html` | Visual settings (saved in `localStorage`) |
+| `settings-page.js` | Settings form logic (used only on `settings.html`) |
+
+Navigation in the header links between these pages. No server is required for local use.
+
 ## Setup
 
-1. Open `index.html` in a web browser
+1. Open `index.html` in a web browser (or use a simple static server if you prefer)
 2. No build process required — uses CDN for dependencies
 
 ## Dependencies
