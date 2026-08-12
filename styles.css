@@ -225,6 +225,48 @@ body {
     max-width: 96vw;
 }
 
+.controls-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 12px;
+}
+
+.controls-toolbar-label {
+    font-size: 13px;
+    font-weight: 510;
+    color: #555;
+    letter-spacing: -0.011em;
+}
+
+.toggle-controls {
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 510;
+}
+
+#controls-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.controls--collapsed {
+    padding: 8px 12px;
+    gap: 0;
+}
+
+.controls--collapsed #controls-body {
+    display: none;
+}
+
+.controls--collapsed .controls-toolbar-label {
+    display: none;
+}
+
 #bezier-form {
     display: flex;
     align-items: center;
