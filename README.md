@@ -21,13 +21,19 @@ A Three.js-based 3D visualization application that draws Bezier curves on a sphe
 | `about.html` | About / how it works |
 | `settings.html` | Visual settings (saved in `localStorage`) |
 | `settings-page.js` | Settings form logic (used only on `settings.html`) |
+| `vercel.json` | Clean URL rewrites for Vercel (`/about`, `/settings`) |
 
-Navigation in the header links between these pages. No server is required for local use.
+Navigation in the header links between these pages. Clean URLs (`/`, `/about`, `/settings`) work on Vercel or any local static server.
 
 ## Setup
 
-1. Open `index.html` in a web browser (or use a simple static server if you prefer)
-2. No build process required — uses CDN for dependencies
+1. Prefer a static server so clean routes work, e.g. `npx serve .` then open the printed URL
+2. Or open `index.html` directly (links like `/about` need a server)
+3. No build process required — uses CDN for dependencies
+
+## Deploy (Vercel)
+
+Import the GitHub repo at [vercel.com/new](https://vercel.com/new). Use **Other** / no framework, leave build and output empty. `vercel.json` maps `/about` → `about.html` and `/settings` → `settings.html`.
 
 ## Dependencies
 
