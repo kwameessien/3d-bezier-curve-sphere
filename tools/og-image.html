@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <!--
-      Source for assets/og-image.png (the social preview card).
+      Source for assets/og-image.png (the social preview card), matching
+      Figma "09A — Link preview · Headline".
       Regenerate by opening this file through a local server at a 1200×630 viewport
       and saving a screenshot of the page.
     -->
@@ -18,41 +19,63 @@
         }
 
         .card {
-            display: grid;
-            grid-template-columns: 1fr 520px;
-            align-items: center;
-            height: 100%;
-            padding: 0 40px 0 72px;
+            position: relative;
+            width: 1200px;
+            height: 630px;
             border: 1px solid var(--ink);
+        }
+
+        .copy {
+            position: absolute;
+            left: 72px;
+            top: 96px;
+        }
+
+        .card .brand {
+            gap: 12px;
+            font-size: 26px;
+        }
+
+        .card .brand-mark {
+            width: 30px;
+            height: 30px;
+        }
+
+        .card .brand-badge {
+            font-size: 13px;
+            padding: 3px 9px;
         }
 
         .card .display {
             font-size: 84px;
-            margin: 22px 0 26px;
+            line-height: 1;
+            margin: 34px 0;
         }
 
-        .card .brand {
-            font-size: 24px;
+        .card .eyebrow {
+            font-size: 14px;
         }
 
-        .card .brand-mark {
-            width: 28px;
-            height: 28px;
+        .card .plate {
+            position: absolute;
+            left: 630px;
+            top: 45px;
+            width: 540px;
         }
     </style>
 </head>
 <body>
     <div class="card">
-        <div>
+        <div class="copy">
             <span class="brand">
                 <svg class="brand-mark" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9.5" fill="none" stroke="#141414" stroke-width="1.2"/><path d="M3.5 14 Q11 -1 18.5 9" fill="none" stroke="#E0464E" stroke-width="1.6" stroke-linecap="round"/></svg>
                 <span>Bézier Sphere</span>
                 <span class="brand-badge">No. 03</span>
             </span>
             <h1 class="display">Two points<br>on a globe, <em>one</em><br><em class="accent">curve</em> between.</h1>
-            <p class="eyebrow">Interactive · Three.js · Kwame Essien</p>
+            <p class="eyebrow">bezier.kwame.co · Three.js · Kwame Essien</p>
         </div>
-        <div class="plate" data-plate="wire" data-a="40.71,-74.01" data-b="51.51,-0.13" data-size="520" data-step="15" data-tilt="22" data-width="3" data-stroke="0.9" data-labels></div>
+        <div class="plate" data-plate="wire" data-a="40.71,-74.01" data-b="51.51,-0.13" data-size="540" data-step="15" data-tilt="22" data-width="3.2" data-stroke="0.9" data-labels></div>
     </div>
     <script src="../shared.js"></script>
 </body>
