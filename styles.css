@@ -4,15 +4,15 @@
    ========================================================= */
 
 :root {
-    --paper: #F6F4EE;
-    --sand: #EFECE4;
-    --card: #FBFAF6;
+    --paper: #FFFFFF;
+    --sand: #F4F4F2;
+    --card: #FFFFFF;
     --ink: #141414;
     --red: #E0464E;
     --graphite: #55524B;
-    --stone: #8A877F;
-    --rule: #D9D5CB;
-    --rule-strong: #CFCBC1;
+    --stone: #85857F;
+    --rule: #E3E3DF;
+    --rule-strong: #D6D6D2;
     --body: #3A3832;
 
     --serif: 'EB Garamond', 'Iowan Old Style', Georgia, serif;
