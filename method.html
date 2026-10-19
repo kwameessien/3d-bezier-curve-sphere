@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Method — Bézier Sphere</title>
+    <meta name="description" content="How Bézier Sphere projects latitude and longitude onto a sphere and lifts a quadratic Bézier control point so the arc clears the surface.">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="How an arc finds its way — Bézier Sphere">
+    <meta property="og:description" content="From degrees to space, a lifted control point and a swept tube.">
+    <meta property="og:image" content="https://kwameessien.github.io/3d-bezier-curve-sphere/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="theme-color" content="#F6F4EE">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Ccircle cx='11' cy='11' r='9.5' fill='%23F6F4EE' stroke='%23141414' stroke-width='1.4'/%3E%3Cpath d='M3.5 14 Q11 -1 18.5 9' fill='none' stroke='%23E0464E' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <a href="index.html" class="brand">
+            <svg class="brand-mark" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9.5" fill="none" stroke="#141414" stroke-width="1.2"/><path d="M3.5 14 Q11 -1 18.5 9" fill="none" stroke="#E0464E" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span>Bézier Sphere</span>
+            <span class="brand-badge">No. 03</span>
+        </a>
+        <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="main-nav">Menu ≡</button>
+        <nav class="main-nav" id="main-nav" aria-label="Main navigation">
+            <a href="index.html" class="nav-link">Index</a>
+            <a href="visualizer.html" class="nav-link">Visualizer</a>
+            <a href="method.html" class="nav-link" aria-current="page">Method</a>
+            <a href="routes.html" class="nav-link">Routes</a>
+            <a href="settings.html" class="nav-link">Settings</a>
+            <a href="https://github.com/kwameessien/3d-bezier-curve-sphere" class="nav-link nav-link--gh" target="_blank" rel="noopener">GitHub ↗</a>
+        </nav>
+    </header>
+
+    <main>
+        <header class="article-head">
+            <div>
+                <p class="eyebrow">§ Method</p>
+                <p class="eyebrow" style="margin-top: 10px;">Reading time 4 min</p>
+            </div>
+            <div>
+                <h1 class="h1">How an arc<br>finds its <em class="accent">way.</em></h1>
+                <p class="lede">The visualizer takes two geographic coordinates, places them on a sphere and joins them with a quadratic Bézier curve whose control point is lifted off the surface. Three steps, each small enough to read in one sitting.</p>
+            </div>
+        </header>
+
+        <div class="rule-wrap"><hr class="rule"></div>
+
+        <section class="step">
+            <div class="step-aside">
+                <div class="step-num">1</div>
+                <p class="eyebrow">Project</p>
+                <p class="caption">φ is latitude, λ is longitude, both in radians. r = 20 in scene units.</p>
+            </div>
+            <div class="step-body">
+                <h2 class="h3">From degrees to space</h2>
+                <p>Each point is converted from spherical coordinates into Cartesian x, y, z, with y pointing to the north pole. Inputs are clamped to ±90° and ±180°, and the form flags anything that isn’t a number.</p>
+                <div class="equation">x =  r · cos φ · cos λ
+y =  r · sin φ
+z = −r · cos φ · sin λ</div>
+                <p>The minus sign on z keeps east on the right when you look at the globe from outside, so routes read the way they do on a map.</p>
+            </div>
+        </section>
+
+        <div class="rule-wrap"><hr class="hair"></div>
+
+        <section class="step">
+            <div class="step-aside">
+                <div class="step-num">2</div>
+                <p class="eyebrow">Lift</p>
+                <p class="caption">The further apart the points, the higher the arc has to rise to stay visible.</p>
+            </div>
+            <div class="step-body">
+                <h2 class="h3">A control point above the surface</h2>
+                <p>A quadratic Bézier has three points: the two ends P₀ and P₂ on the sphere, and a control point P₁ that pulls the curve towards it. P₁ sits on the line through the midpoint of the chord, pushed out by a factor k.</p>
+                <div class="equation">B(t) = (1−t)² P₀ + 2(1−t)t P₁ + t² P₂ ,   0 ≤ t ≤ 1
+P₁   = M̂ · r · k ,   M̂ = normalize(P₀ + P₂)
+k    = 1 / cos(θ/2) + 0.7 · sin(θ/2)</div>
+                <p>θ is the angle between the two points. With k = 1 / cos(θ/2) alone the curve would leave the surface tangentially and hug it; the extra 0.7 · sin(θ/2) lifts it clear, and more so for longer routes. Above 2.2, k is eased towards 3 so near-antipodal arcs stay on screen; they dip just under the surface at their ends, because a single quadratic can’t leave opposite points tangentially. Antipodal points have no midpoint, so the arc bows towards the pole instead.</p>
+                <div class="figure-row">
+                    <figure>
+                        <div class="plate" data-plate="wire" data-a="48.86,2.35" data-b="35.68,139.69" data-size="260" data-step="30" data-stroke="0.6" data-width="2" data-control aria-label="Paris to Tokyo with its control polygon"></div>
+                        <figcaption class="caption">(a)</figcaption>
+                    </figure>
+                    <figure>
+                        <div class="plot" data-plot="apex"></div>
+                        <figcaption class="caption">(b)</figcaption>
+                    </figure>
+                </div>
+                <p class="caption"><b>Fig. 3</b> — (a) Paris to Tokyo with its control polygon P₀ P₁ P₂; hidden segments dashed. (b) Height of the arc’s apex against the angular distance between the two points.</p>
+            </div>
+        </section>
+
+        <div class="rule-wrap"><hr class="hair"></div>
+
+        <section class="step">
+            <div class="step-aside">
+                <div class="step-num">3</div>
+                <p class="eyebrow">Render</p>
+                <p class="caption">The tube is drawn on over about a second, led by a small pen.</p>
+            </div>
+            <div class="step-body">
+                <h2 class="h3">Stack</h2>
+                <dl class="stack">
+                    <div><dt>Three.js</dt><dd>r128 — scene, PerspectiveCamera, Lambert material</dd></div>
+                    <div><dt>OrbitControls</dt><dd>drag to orbit, scroll to zoom</dd></div>
+                    <div><dt>TubeGeometry</dt><dd>96 segments × configurable radius, revealed with setDrawRange</dd></div>
+                    <div><dt>jQuery</dt><dd>3.6 — form events and DOM</dd></div>
+                    <div><dt>localStorage</dt><dd>settings, saved routes, panel state</dd></div>
+                </dl>
+                <p><a href="visualizer.html" class="btn btn--primary">Try it in the visualizer →</a></p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <span><b>Bézier Sphere</b> — an interactive study by Kwame Essien.</span>
+        <span class="coords">Three.js r128 · OrbitControls · no build step</span>
+        <nav class="footer-links" aria-label="Footer">
+            <a href="https://github.com/kwameessien/3d-bezier-curve-sphere" target="_blank" rel="noopener">GitHub ↗</a>
+            <a href="https://github.com/kwameessien/3d-bezier-curve-sphere#readme" target="_blank" rel="noopener">README</a>
+        </nav>
+    </footer>
+
+    <script src="shared.js"></script>
+</body>
+</html>

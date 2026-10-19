@@ -1,58 +1,61 @@
-# 3D Bezier Curve Visualizer
+# Bézier Sphere
 
-A Three.js-based 3D visualization application that draws Bezier curves on a sphere using geographic coordinates (latitude/longitude).
+**Two points on a globe, one curve between.** An interactive Three.js study that turns latitude and longitude into 3D space and joins two points with a quadratic Bézier arc, drawn, rotated and zoomed in real time.
+
+![Arcs being drawn between cities on a 3D globe](assets/demo.gif)
+
+**Live:** https://kwameessien.github.io/3d-bezier-curve-sphere/
 
 ## Features
 
-- **Interactive 3D scene** with a rotating sphere
-- **Orbit controls**: drag to rotate the camera, scroll to zoom
-- **Draw curves**: enter two lat/lon points and click "Draw curve" (single step)
-- **Input validation**: coordinates are clamped to valid ranges with clear error messages
-- **Clear curves**: remove all drawn curves
-- **Pause/Resume rotation**: freeze or resume automatic camera orbit
-- **Preset routes**: one-click examples (NYC → London, Equator, Sydney → Tokyo)
-- **Thick tube curves** for better visibility
+- **Draw arcs** between any two latitude/longitude points; the curve draws itself on, led by a small pen
+- **Great-circle readout**: distance in km, arc lift and curve count for the active route
+- **Shareable links**: every route updates the URL (`visualizer.html?a=40.71,-74.01&b=51.51,-0.13`); **Share link** copies it
+- **Export PNG**: saves the current view as a captioned "figure" with coordinates and distance
+- **Presets and saved routes**, plus a **Routes** catalogue page with dotted-globe thumbnails
+- **Settings**: sphere opacity, curve thickness and colour, rotation speed, Paper / Blueprint / Night themes, graticule toggle; all with a live preview
+- Orbit controls (drag to rotate, scroll to zoom), keyboard shortcuts (**H** hide panel, **D** draw), responsive down to phone width
 
-## Site structure
+## Pages
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Main 3D visualizer (entry point) |
-| `about.html` | About / how it works |
+| `index.html` | Home: project overview, plates and route previews |
+| `visualizer.html` | The interactive 3D globe |
+| `method.html` | How it works: projection, the lifted control point, the stack |
+| `routes.html` | Catalogue of preset and saved routes |
 | `settings.html` | Visual settings (saved in `localStorage`) |
-| `settings-page.js` | Settings form logic (used only on `settings.html`) |
-| `vercel.json` | Clean URL rewrites for Vercel (`/about`, `/settings`) |
+| `404.html` | Not-found page (served automatically by GitHub Pages) |
+| `about.html` | Redirect to `method.html` for old links |
 
-Navigation in the header links between these pages. Clean URLs (`/`, `/about`, `/settings`) work on Vercel or any local static server.
+Scripts: `shared.js` (curve maths, presets, storage, share links, SVG globe plates), `app.js` (the Three.js visualizer, MVC), `routes-page.js`, `settings-page.js`. Styles live in `styles.css`.
 
-## Setup
+## How it works
 
-1. Prefer a static server so clean routes work, e.g. `npx serve .` then open the printed URL
-2. Or open `index.html` directly (links like `/about` need a server)
-3. No build process required — uses CDN for dependencies
+Each point is projected onto a sphere of radius 20 (`x = r·cosφ·cosλ, y = r·sinφ, z = −r·cosφ·sinλ`). The control point sits along the chord's midpoint direction at `k = 1/cos(θ/2) + 0.7·sin(θ/2)` radii, so the arc leaves the surface and rises more for longer routes. Antipodal points (e.g. pole to pole) bow towards a pole. The full write-up is on the [Method page](https://kwameessien.github.io/3d-bezier-curve-sphere/method.html).
 
-## Deploy (Vercel)
+## Run locally
 
-Import the GitHub repo at [vercel.com/new](https://vercel.com/new). Use **Other** / no framework, leave build and output empty. `vercel.json` maps `/about` → `about.html` and `/settings` → `settings.html`.
+No build step. Serve the folder with any static server, e.g.
 
-## Dependencies
+```sh
+npx serve .
+# or
+python3 -m http.server
+```
 
-- jQuery 3.6.0 (via CDN)
-- Three.js r128 (via CDN)
-- Three.js OrbitControls (via CDN)
+Then open the printed URL. All links are relative, so the site also works from a subfolder.
 
-## Usage
+## Deploy
 
-1. Enter latitude and longitude for **Point A** (lat A, lon A)
-2. Enter latitude and longitude for **Point B** (lat B, lon B)
-3. Click **Draw curve** to compute 3D coordinates and render the curve on the sphere
-4. Use **Presets** to try example routes, or **Clear curves** to remove all curves
-5. **Pause rotation** to inspect the scene; drag to orbit the camera when rotation is paused or running
+**GitHub Pages:** `.github/workflows/pages.yml` publishes the site on every push to `main`. In the repository go to **Settings → Pages** and set **Source** to **GitHub Actions** (one-time).
 
-## Architecture
+**Vercel** also works: import the repo with no framework and no build command. `vercel.json` enables clean URLs (`/method`, `/settings`, …).
 
-The application follows an MVC pattern:
+The social preview card (`assets/og-image.png`) is a screenshot of `tools/og-image.html` at 1200×630.
 
-- **SonicPlayerController**: Handles user interactions and coordinates between view and model
-- **SonicPlayerView**: Manages the Three.js scene, camera, OrbitControls, and rendering
-- **SonicPlayerModel**: Calculates spatial coordinates from geographic coordinates
+## Dependencies (via CDN)
+
+- Three.js r128 and its OrbitControls
+- jQuery 3.6.0
+- EB Garamond and IBM Plex Mono (Google Fonts)

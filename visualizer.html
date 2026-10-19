@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizer — Bézier Sphere</title>
+    <meta name="description" content="Draw a quadratic Bézier arc between any two points on a 3D globe. Drag to rotate, scroll to zoom, share the link.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Bézier Sphere — Visualizer">
+    <meta property="og:description" content="Draw an arc between any two points on a 3D globe and share the link.">
+    <meta property="og:image" content="https://kwameessien.github.io/3d-bezier-curve-sphere/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="theme-color" content="#F6F4EE">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Ccircle cx='11' cy='11' r='9.5' fill='%23F6F4EE' stroke='%23141414' stroke-width='1.4'/%3E%3Cpath d='M3.5 14 Q11 -1 18.5 9' fill='none' stroke='%23E0464E' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="page-visualizer">
+    <header class="site-header">
+        <a href="index.html" class="brand">
+            <svg class="brand-mark" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9.5" fill="none" stroke="#141414" stroke-width="1.2"/><path d="M3.5 14 Q11 -1 18.5 9" fill="none" stroke="#E0464E" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span>Bézier Sphere</span>
+            <span class="brand-badge">No. 03</span>
+        </a>
+        <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="main-nav">Menu ≡</button>
+        <nav class="main-nav" id="main-nav" aria-label="Main navigation">
+            <a href="index.html" class="nav-link">Index</a>
+            <a href="visualizer.html" class="nav-link" aria-current="page">Visualizer</a>
+            <a href="method.html" class="nav-link">Method</a>
+            <a href="routes.html" class="nav-link">Routes</a>
+            <a href="settings.html" class="nav-link">Settings</a>
+            <a href="https://github.com/kwameessien/3d-bezier-curve-sphere" class="nav-link nav-link--gh" target="_blank" rel="noopener">GitHub ↗</a>
+        </nav>
+    </header>
+
+    <main class="workspace" id="visualizer-page">
+        <section class="stage" id="stage" aria-label="3D globe">
+            <div id="canvas"></div>
+
+            <div class="stage-caption">
+                <p class="eyebrow">Fig. 2 — live</p>
+                <h1 id="route-title">New York → London</h1>
+                <p class="coords" id="route-coords"></p>
+            </div>
+
+            <div class="stage-toolbar">
+                <button type="button" id="show-panel" class="btn btn--sm" hidden>Show panel · H</button>
+                <button type="button" id="pause-rotation" class="btn btn--sm" aria-pressed="false">❚❚ Pause</button>
+                <button type="button" id="reset-view" class="btn btn--sm">↺ Reset view</button>
+                <button type="button" id="export-png" class="btn btn--sm">↓ Export PNG</button>
+                <button type="button" id="share-link" class="btn btn--sm">⧉ Share link</button>
+            </div>
+
+            <div class="stage-shortcuts" aria-hidden="true">
+                <span><i class="kbd">Drag</i> rotate</span>
+                <span><i class="kbd">Scroll</i> zoom</span>
+                <span><i class="kbd">H</i> hide panel</span>
+                <span><i class="kbd">D</i> draw</span>
+            </div>
+
+            <dl class="readout" aria-live="polite">
+                <div><dt>GREAT-CIRCLE</dt><dd id="readout-distance">—</dd></div>
+                <div><dt>ARC LIFT</dt><dd id="readout-lift">—</dd></div>
+                <div><dt>CURVES</dt><dd id="readout-curves">0</dd></div>
+            </dl>
+
+            <div class="toast" id="toast" role="status"></div>
+        </section>
+
+        <aside class="panel" id="controls-panel" aria-label="Controls">
+            <div class="panel-head">
+                <span class="eyebrow">Instrument · <span id="panel-distance" class="mono">—</span></span>
+                <button type="button" id="toggle-controls" class="link-btn" aria-expanded="true" aria-controls="controls-panel">Hide panel · H</button>
+            </div>
+
+            <form id="bezier-form" novalidate>
+                <fieldset class="point">
+                    <legend><span>A</span> — start</legend>
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="latitudeA">Latitude</label>
+                            <input class="input" type="number" id="latitudeA" step="0.01" min="-90" max="90" inputmode="decimal" required>
+                        </div>
+                        <div class="field">
+                            <label for="longitudeA">Longitude</label>
+                            <input class="input" type="number" id="longitudeA" step="0.01" min="-180" max="180" inputmode="decimal" required>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="point" style="margin-top: 22px;">
+                    <legend><span>B</span> — end</legend>
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="latitudeB">Latitude</label>
+                            <input class="input" type="number" id="latitudeB" step="0.01" min="-90" max="90" inputmode="decimal" required>
+                        </div>
+                        <div class="field">
+                            <label for="longitudeB">Longitude</label>
+                            <input class="input" type="number" id="longitudeB" step="0.01" min="-180" max="180" inputmode="decimal" required>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="actions" style="margin-top: 22px;">
+                    <button type="submit" id="draw-curve" class="btn btn--primary">Draw curve →</button>
+                    <button type="button" id="clear-curves" class="btn">Clear</button>
+                </div>
+            </form>
+            <div id="message" class="message" aria-live="polite"></div>
+
+            <hr class="hair">
+
+            <div>
+                <h2 class="eyebrow">Presets</h2>
+                <ul class="list" id="preset-list"></ul>
+            </div>
+
+            <div>
+                <h2 class="eyebrow" style="margin-bottom: 10px;">Saved routes</h2>
+                <form class="saved-row" id="save-route-form">
+                    <label for="saved-route-name" class="sr-only">Name for saved route</label>
+                    <input class="input" type="text" id="saved-route-name" placeholder="Name this route…" maxlength="60">
+                    <button type="submit" id="save-route" class="btn btn--sm" style="height: 44px;">Save</button>
+                </form>
+                <ul id="saved-routes-list" class="list" style="margin-top: 6px;"></ul>
+            </div>
+
+            <p class="caption" style="font-size: 15px;">Coordinates in degrees: latitude −90 to 90, longitude −180 to 180 (west is negative). <a href="routes.html">All routes →</a></p>
+        </aside>
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="shared.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Routes — Bézier Sphere</title>
+    <meta name="description" content="A catalogue of preset and saved routes, each drawn as a Bézier arc on a dotted globe.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Routes — Bézier Sphere">
+    <meta property="og:description" content="Preset and saved routes, catalogued.">
+    <meta property="og:image" content="https://kwameessien.github.io/3d-bezier-curve-sphere/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="theme-color" content="#F6F4EE">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Ccircle cx='11' cy='11' r='9.5' fill='%23F6F4EE' stroke='%23141414' stroke-width='1.4'/%3E%3Cpath d='M3.5 14 Q11 -1 18.5 9' fill='none' stroke='%23E0464E' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <a href="index.html" class="brand">
+            <svg class="brand-mark" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9.5" fill="none" stroke="#141414" stroke-width="1.2"/><path d="M3.5 14 Q11 -1 18.5 9" fill="none" stroke="#E0464E" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span>Bézier Sphere</span>
+            <span class="brand-badge">No. 03</span>
+        </a>
+        <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="main-nav">Menu ≡</button>
+        <nav class="main-nav" id="main-nav" aria-label="Main navigation">
+            <a href="index.html" class="nav-link">Index</a>
+            <a href="visualizer.html" class="nav-link">Visualizer</a>
+            <a href="method.html" class="nav-link">Method</a>
+            <a href="routes.html" class="nav-link" aria-current="page">Routes</a>
+            <a href="settings.html" class="nav-link">Settings</a>
+            <a href="https://github.com/kwameessien/3d-bezier-curve-sphere" class="nav-link nav-link--gh" target="_blank" rel="noopener">GitHub ↗</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="page-head">
+            <div>
+                <p class="eyebrow">Plate II · Catalogue</p>
+                <h1 class="h1">Routes</h1>
+            </div>
+            <div class="filters" role="toolbar" aria-label="Filter and sort routes">
+                <button type="button" class="chip" data-filter="all" aria-pressed="true">All <span data-count="all"></span></button>
+                <button type="button" class="chip" data-filter="preset" aria-pressed="false">Presets <span data-count="preset"></span></button>
+                <button type="button" class="chip" data-filter="saved" aria-pressed="false">Saved <span data-count="saved"></span></button>
+                <span class="spacer"></span>
+                <button type="button" class="btn btn--sm" id="sort-toggle" aria-pressed="false">Sort: catalogue</button>
+                <a href="visualizer.html" class="btn btn--sm btn--primary">+ New route</a>
+            </div>
+        </div>
+
+        <div class="route-grid" id="route-grid" aria-live="polite"></div>
+        <p class="sr-only" role="status" id="route-status"></p>
+    </main>
+
+    <footer class="site-footer">
+        <span><b>Bézier Sphere</b> — an interactive study by Kwame Essien.</span>
+        <span class="coords">Three.js r128 · OrbitControls · no build step</span>
+        <nav class="footer-links" aria-label="Footer">
+            <a href="https://github.com/kwameessien/3d-bezier-curve-sphere" target="_blank" rel="noopener">GitHub ↗</a>
+            <a href="https://github.com/kwameessien/3d-bezier-curve-sphere#readme" target="_blank" rel="noopener">README</a>
+        </nav>
+    </footer>
+
+    <script src="shared.js"></script>
+    <script src="routes-page.js"></script>
+</body>
+</html>

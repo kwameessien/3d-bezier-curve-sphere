@@ -3,58 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings — 3D Bezier Visualizer</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>">
+    <title>Settings — Bézier Sphere</title>
+    <meta name="description" content="Tune the globe: sphere opacity, curve thickness and colour, rotation speed, canvas theme and graticule.">
+    <meta name="theme-color" content="#F6F4EE">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Ccircle cx='11' cy='11' r='9.5' fill='%23F6F4EE' stroke='%23141414' stroke-width='1.4'/%3E%3Cpath d='M3.5 14 Q11 -1 18.5 9' fill='none' stroke='%23E0464E' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header class="site-header">
-        <a href="/" class="site-title">3D Bezier Visualizer</a>
-        <nav class="main-nav" aria-label="Main navigation">
-            <a href="/" class="nav-link">Visualizer</a>
-            <a href="/about" class="nav-link">About</a>
-            <a href="/settings" class="nav-link active" aria-current="page">Settings</a>
+        <a href="index.html" class="brand">
+            <svg class="brand-mark" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9.5" fill="none" stroke="#141414" stroke-width="1.2"/><path d="M3.5 14 Q11 -1 18.5 9" fill="none" stroke="#E0464E" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span>Bézier Sphere</span>
+            <span class="brand-badge">No. 03</span>
+        </a>
+        <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="main-nav">Menu ≡</button>
+        <nav class="main-nav" id="main-nav" aria-label="Main navigation">
+            <a href="index.html" class="nav-link">Index</a>
+            <a href="visualizer.html" class="nav-link">Visualizer</a>
+            <a href="method.html" class="nav-link">Method</a>
+            <a href="routes.html" class="nav-link">Routes</a>
+            <a href="settings.html" class="nav-link" aria-current="page">Settings</a>
+            <a href="https://github.com/kwameessien/3d-bezier-curve-sphere" class="nav-link nav-link--gh" target="_blank" rel="noopener">GitHub ↗</a>
         </nav>
     </header>
 
-    <main class="secondary-page">
-        <div class="about-content settings-content">
-            <h1>Settings</h1>
-            <p class="settings-intro">Changes are saved to your browser. Open the <a href="/">visualizer</a> to see them applied.</p>
-            <form id="settings-form">
-                <div class="setting-row">
-                    <label for="setting-opacity">Sphere opacity</label>
-                    <input type="range" id="setting-opacity" min="0.1" max="1" step="0.05" value="0.6">
-                    <span id="setting-opacity-value" class="setting-value">0.6</span>
+    <main class="settings-layout">
+        <div>
+            <p class="eyebrow">Preferences · saved to this browser</p>
+            <h1 class="h1">Settings</h1>
+
+            <form id="settings-form" class="settings-list">
+                <div class="setting">
+                    <label class="setting-label" for="setting-opacity">Sphere opacity<span class="caption">How solid the globe reads.</span></label>
+                    <input type="range" id="setting-opacity" min="0.1" max="1" step="0.05">
+                    <output class="setting-value" id="setting-opacity-value" for="setting-opacity"></output>
                 </div>
-                <div class="setting-row">
-                    <label for="setting-tube-radius">Curve thickness</label>
-                    <input type="range" id="setting-tube-radius" min="0.2" max="1.2" step="0.1" value="0.4">
-                    <span id="setting-tube-radius-value" class="setting-value">0.4</span>
+                <div class="setting">
+                    <label class="setting-label" for="setting-tube-radius">Curve thickness<span class="caption">Tube radius in scene units.</span></label>
+                    <input type="range" id="setting-tube-radius" min="0.2" max="1.2" step="0.1">
+                    <output class="setting-value" id="setting-tube-radius-value" for="setting-tube-radius"></output>
                 </div>
-                <div class="setting-row">
-                    <label for="setting-curve-color">Curve color</label>
-                    <input type="color" id="setting-curve-color" value="#EE4950">
+                <div class="setting">
+                    <label class="setting-label" for="setting-rotation-speed">Rotation speed<span class="caption">Auto-orbit when not paused.</span></label>
+                    <input type="range" id="setting-rotation-speed" min="0" max="0.03" step="0.002">
+                    <output class="setting-value" id="setting-rotation-speed-value" for="setting-rotation-speed"></output>
                 </div>
-                <div class="setting-row">
-                    <label for="setting-rotation-speed">Rotation speed</label>
-                    <input type="range" id="setting-rotation-speed" min="0.002" max="0.03" step="0.002" value="0.01">
-                    <span id="setting-rotation-speed-value" class="setting-value">0.01</span>
+                <fieldset class="setting setting--wide">
+                    <legend class="setting-label" style="float: left;">Curve colour<span class="caption">Applies to new curves.</span></legend>
+                    <div class="setting-control" id="color-swatches">
+                        <label class="swatch" title="Line red"><input type="radio" name="curve-color" value="#E0464E" aria-label="Line red"><span style="--swatch: #E0464E"></span></label>
+                        <label class="swatch" title="Ink"><input type="radio" name="curve-color" value="#141414" aria-label="Ink"><span style="--swatch: #141414"></span></label>
+                        <label class="swatch" title="Cobalt"><input type="radio" name="curve-color" value="#2F5BEA" aria-label="Cobalt"><span style="--swatch: #2F5BEA"></span></label>
+                        <label class="swatch" title="Ochre"><input type="radio" name="curve-color" value="#C8902E" aria-label="Ochre"><span style="--swatch: #C8902E"></span></label>
+                        <label class="swatch" title="Viridian"><input type="radio" name="curve-color" value="#2E8B6A" aria-label="Viridian"><span style="--swatch: #2E8B6A"></span></label>
+                        <label class="swatch swatch--custom" title="Custom colour"><input type="radio" name="curve-color" value="custom" aria-label="Custom colour"><span></span></label>
+                        <input type="color" id="setting-curve-color" class="sr-only" aria-label="Custom curve colour" tabindex="-1">
+                    </div>
+                </fieldset>
+                <fieldset class="setting setting--wide">
+                    <legend class="setting-label" style="float: left;">Plate<span class="caption">Canvas theme.</span></legend>
+                    <div class="setting-control">
+                        <div class="segmented">
+                            <label><input type="radio" name="theme" value="paper"><span>Paper</span></label>
+                            <label><input type="radio" name="theme" value="blueprint"><span>Blueprint</span></label>
+                            <label><input type="radio" name="theme" value="night"><span>Night</span></label>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="setting setting--wide">
+                    <span class="setting-label" id="graticule-label">Graticule<span class="caption">Latitude / longitude lines.</span></span>
+                    <div class="setting-control">
+                        <label class="switch">
+                            <input type="checkbox" id="setting-graticule" aria-labelledby="graticule-label">
+                            <span class="switch-track"></span>
+                            <span>Every 15°</span>
+                        </label>
+                    </div>
                 </div>
-                <button type="button" id="settings-apply">Apply</button>
             </form>
+
+            <div class="settings-actions">
+                <button type="button" id="settings-apply" class="btn btn--primary">Apply &amp; open visualizer →</button>
+                <button type="button" id="settings-reset" class="btn">Reset to defaults</button>
+                <span class="message" id="settings-status" role="status"></span>
+            </div>
         </div>
+
+        <aside class="settings-preview" aria-label="Preview">
+            <div class="figure" id="preview-figure"><div class="plate" id="preview"></div></div>
+            <p class="caption"><b>Preview</b> — updates as you change settings.</p>
+        </aside>
     </main>
 
     <footer class="site-footer">
-        <span>Built with <a href="https://threejs.org/" target="_blank" rel="noopener">Three.js</a></span>
-        <a href="README.md" target="_blank" rel="noopener">README</a>
+        <span><b>Bézier Sphere</b> — an interactive study by Kwame Essien.</span>
+        <span class="coords">Three.js r128 · OrbitControls · no build step</span>
+        <nav class="footer-links" aria-label="Footer">
+            <a href="https://github.com/kwameessien/3d-bezier-curve-sphere" target="_blank" rel="noopener">GitHub ↗</a>
+            <a href="https://github.com/kwameessien/3d-bezier-curve-sphere#readme" target="_blank" rel="noopener">README</a>
+        </nav>
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="shared.js"></script>
     <script src="settings-page.js"></script>
 </body>
 </html>
