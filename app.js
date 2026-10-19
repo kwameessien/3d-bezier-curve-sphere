@@ -555,7 +555,7 @@
 
       // Paper-coloured dots mark the start and end points
       var markerGeometry = new THREE.SphereGeometry(this.tubeRadius * 1.6, 16, 12);
-      var markerMaterial = new THREE.MeshLambertMaterial({ color: 0xF6F4EE, emissive: 0x333333 });
+      var markerMaterial = new THREE.MeshLambertMaterial({ color: 0xFFFFFF, emissive: 0x333333 });
       [start, end].forEach(function(p, i) {
         var m = new THREE.Mesh(i ? markerGeometry.clone() : markerGeometry, markerMaterial.clone());
         m.position.copy(p);
@@ -606,7 +606,7 @@
       out.height = src.height + pad * 2 + band;
       var ctx = out.getContext('2d');
 
-      ctx.fillStyle = '#F6F4EE';
+      ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, out.width, out.height);
       ctx.drawImage(src, pad, pad);
       ctx.strokeStyle = '#141414';
@@ -626,7 +626,7 @@
       ctx.font = Math.round(20 * scale) + 'px "IBM Plex Mono", monospace';
       ctx.fillText(meta.distance, out.width - pad, baseY);
       ctx.font = Math.round(11 * scale) + 'px "IBM Plex Mono", monospace';
-      ctx.fillStyle = '#8A877F';
+      ctx.fillStyle = '#85857F';
       ctx.fillText('BÉZIER SPHERE', out.width - pad, baseY + Math.round(26 * scale));
 
       var slug = (meta.title || 'route').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'route';

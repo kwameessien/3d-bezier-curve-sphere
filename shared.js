@@ -31,7 +31,7 @@
 
   // Canvas palettes for the visualizer and settings preview
   BS.THEMES = {
-    paper:     { bg: '#EFECE4', sphere: '#FFFFFF', shade: '#B9B6AE', grid: '#141414', gridOpacity: 0.28 },
+    paper:     { bg: '#F4F4F2', sphere: '#FFFFFF', shade: '#B8B8B4', grid: '#141414', gridOpacity: 0.28 },
     blueprint: { bg: '#1D3B6E', sphere: '#2A4F8F', shade: '#16305C', grid: '#DCE6F5', gridOpacity: 0.4 },
     night:     { bg: '#0F1115', sphere: '#30333A', shade: '#15171B', grid: '#F6F4EE', gridOpacity: 0.22 }
   };
@@ -273,7 +273,7 @@
     if (o.style === 'shaded') {
       s += '<defs><radialGradient id="' + id + '" cx="0.38" cy="0.32" r="0.72">' +
            '<stop offset="0" stop-color="' + (o.theme && o.theme !== 'paper' ? theme.sphere : '#FFFFFF') + '"/>' +
-           '<stop offset="0.55" stop-color="' + (o.theme && o.theme !== 'paper' ? theme.sphere : '#E7E5E0') + '"/>' +
+           '<stop offset="0.55" stop-color="' + (o.theme && o.theme !== 'paper' ? theme.sphere : '#E6E6E3') + '"/>' +
            '<stop offset="1" stop-color="' + theme.shade + '"/></radialGradient></defs>';
       s += '<circle cx="' + c + '" cy="' + c + '" r="' + R + '" fill="url(#' + id + ')" fill-opacity="' + (o.opacity != null ? o.opacity : 1) + '"/>';
     }
@@ -328,7 +328,7 @@
         marks += '<text x="' + (cp[0] + 8).toFixed(1) + '" y="' + (cp[1] - 4).toFixed(1) + '" ' + mono + ' font-size="' + fs + '" fill="' + ink + '">P₁</text>';
       }
       [e0, e2].forEach(function(e, j) {
-        s += '<circle cx="' + e[0].toFixed(1) + '" cy="' + e[1].toFixed(1) + '" r="' + dotR + '" fill="#F6F4EE" stroke="#141414" stroke-width="1.2"/>';
+        s += '<circle cx="' + e[0].toFixed(1) + '" cy="' + e[1].toFixed(1) + '" r="' + dotR + '" fill="#FFFFFF" stroke="#141414" stroke-width="1.2"/>';
         if (i === 0 && (o.labels || o.control)) {
           var txt = o.control ? (j ? 'P₂' : 'P₀') : (j ? 'end' : 'start');
           marks += '<text x="' + (e[0] + (j ? 9 : -9)).toFixed(1) + '" y="' + (e[1] + fs / 3).toFixed(1) + '" text-anchor="' + (j ? 'start' : 'end') + '" ' + mono + ' font-size="' + fs + '" fill="' + ink + '">' + txt + '</text>';
