@@ -4,7 +4,7 @@
 
 ![Arcs being drawn between cities on a 3D globe](assets/demo.gif)
 
-**Live:** https://kwameessien.github.io/3d-bezier-curve-sphere/
+**Live:** https://bezier.kwame.co/
 
 ## Features
 
@@ -32,7 +32,7 @@ Scripts: `shared.js` (curve maths, presets, storage, share links, SVG globe plat
 
 ## How it works
 
-Each point is projected onto a sphere of radius 20 (`x = r·cosφ·cosλ, y = r·sinφ, z = −r·cosφ·sinλ`). The control point sits along the chord's midpoint direction at `k = 1/cos(θ/2) + 0.7·sin(θ/2)` radii, so the arc leaves the surface and rises more for longer routes. Antipodal points (e.g. pole to pole) bow towards a pole. The full write-up is on the [Method page](https://kwameessien.github.io/3d-bezier-curve-sphere/method.html).
+Each point is projected onto a sphere of radius 20 (`x = r·cosφ·cosλ, y = r·sinφ, z = −r·cosφ·sinλ`). The control point sits along the chord's midpoint direction at `k = 1/cos(θ/2) + 0.7·sin(θ/2)` radii, so the arc leaves the surface and rises more for longer routes. Antipodal points (e.g. pole to pole) bow towards a pole. The full write-up is on the [Method page](https://bezier.kwame.co/method.html).
 
 ## Run locally
 
@@ -49,6 +49,8 @@ Then open the printed URL. All links are relative, so the site also works from a
 ## Deploy
 
 **GitHub Pages:** `.github/workflows/pages.yml` publishes the site on every push to `main`. In the repository go to **Settings → Pages** and set **Source** to **GitHub Actions** (one-time).
+
+**Custom domain (`bezier.kwame.co`):** a DNS `CNAME` record points `bezier` at `kwameessien.github.io`, and the domain is set under **Settings → Pages → Custom domain** with **Enforce HTTPS** on. Deploys from Actions ignore `CNAME` files, so the setting lives in the repository, not in a file. If the domain changes, update the `og:image` URLs in the page `<head>`s too.
 
 **Vercel** also works: import the repo with no framework and no build command. `vercel.json` enables clean URLs (`/method`, `/settings`, …).
 
