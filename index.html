@@ -3,134 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Bezier Curve Visualizer</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>">
+    <title>Bézier Sphere — two points on a globe, one curve between</title>
+    <meta name="description" content="An interactive Three.js study that turns latitude and longitude into 3D space and joins two points with a quadratic Bézier arc.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Bézier Sphere">
+    <meta property="og:description" content="Two points on a globe, one curve between — an interactive Three.js study.">
+    <meta property="og:image" content="https://kwameessien.github.io/3d-bezier-curve-sphere/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="theme-color" content="#F6F4EE">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Ccircle cx='11' cy='11' r='9.5' fill='%23F6F4EE' stroke='%23141414' stroke-width='1.4'/%3E%3Cpath d='M3.5 14 Q11 -1 18.5 9' fill='none' stroke='%23E0464E' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header class="site-header">
-        <a href="/" class="site-title">3D Bezier Visualizer</a>
-        <nav class="main-nav" aria-label="Main navigation">
-            <a href="/" class="nav-link active" aria-current="page">Visualizer</a>
-            <a href="/about" class="nav-link">About</a>
-            <a href="/settings" class="nav-link">Settings</a>
+        <a href="index.html" class="brand">
+            <svg class="brand-mark" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9.5" fill="none" stroke="#141414" stroke-width="1.2"/><path d="M3.5 14 Q11 -1 18.5 9" fill="none" stroke="#E0464E" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span>Bézier Sphere</span>
+            <span class="brand-badge">No. 03</span>
+        </a>
+        <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="main-nav">Menu ≡</button>
+        <nav class="main-nav" id="main-nav" aria-label="Main navigation">
+            <a href="index.html" class="nav-link" aria-current="page">Index</a>
+            <a href="visualizer.html" class="nav-link">Visualizer</a>
+            <a href="method.html" class="nav-link">Method</a>
+            <a href="routes.html" class="nav-link">Routes</a>
+            <a href="settings.html" class="nav-link">Settings</a>
+            <a href="https://github.com/kwameessien/3d-bezier-curve-sphere" class="nav-link nav-link--gh" target="_blank" rel="noopener">GitHub ↗</a>
         </nav>
     </header>
 
-    <main id="visualizer-page">
-        <div class="controls" id="controls-panel">
-            <div class="controls-toolbar">
-                <span class="controls-toolbar-label">Controls</span>
-                <button type="button" id="toggle-controls" class="toggle-controls" aria-expanded="true" aria-controls="controls-body" title="Hide or show the form (H)">
-                    Hide panel
-                </button>
+    <main>
+        <section class="hero">
+            <div>
+                <p class="eyebrow">Project 03 · Interactive · Three.js</p>
+                <h1 class="display">Two points<br>on a globe, <em>one</em><br><em class="accent">curve</em> between.</h1>
+                <p class="lede">An interactive study that turns latitude and longitude into 3D space and joins them with a quadratic Bézier arc — drawn, rotated and zoomed in real time.</p>
+                <div class="hero-actions">
+                    <a href="visualizer.html" class="btn btn--primary">Open the visualizer →</a>
+                    <a href="https://github.com/kwameessien/3d-bezier-curve-sphere" class="btn" target="_blank" rel="noopener">View source on GitHub ↗</a>
+                </div>
             </div>
-            <div id="controls-body">
-                <form id="bezier-form">
-                    <div class="input-group">
-                        <label for="latitudeA">lat A:</label>
-                        <input type="number" id="latitudeA" step="0.01" value="0" min="-90" max="90" aria-label="Point A latitude">
-                    </div>
-                    <div class="input-group">
-                        <label for="longitudeA">lon A:</label>
-                        <input type="number" id="longitudeA" step="0.01" value="0" min="-180" max="180" aria-label="Point A longitude">
-                    </div>
-                    <div class="input-group">
-                        <label for="latitudeB">lat B:</label>
-                        <input type="number" id="latitudeB" step="0.01" value="45" min="-90" max="90" aria-label="Point B latitude">
-                    </div>
-                    <div class="input-group">
-                        <label for="longitudeB">lon B:</label>
-                        <input type="number" id="longitudeB" step="0.01" value="45" min="-180" max="180" aria-label="Point B longitude">
-                    </div>
-                    <button type="button" id="draw-curve">Draw curve</button>
-                    <button type="button" id="clear-curves">Clear curves</button>
-                    <button type="button" id="pause-rotation" aria-pressed="false">Pause rotation</button>
-                </form>
-                <div class="presets">
-                    <span class="presets-label">Presets:</span>
-                    <button type="button" class="preset" data-lat-a="40.71" data-lon-a="-74.01" data-lat-b="51.51" data-lon-b="-0.13">NYC → London</button>
-                    <button type="button" class="preset" data-lat-a="0" data-lon-a="0" data-lat-b="0" data-lon-b="90">Equator 0°→90°</button>
-                    <button type="button" class="preset" data-lat-a="-33.87" data-lon-a="151.21" data-lat-b="35.68" data-lon-b="139.69">Sydney → Tokyo</button>
-                    <button type="button" class="preset" data-lat-a="48.86" data-lon-a="2.35" data-lat-b="35.68" data-lon-b="139.69">Paris → Tokyo</button>
-                    <button type="button" class="preset" data-lat-a="-90" data-lon-a="0" data-lat-b="90" data-lon-b="0">Pole to pole</button>
-                    <button type="button" class="preset" data-lat-a="34.05" data-lon-a="-118.24" data-lat-b="40.71" data-lon-b="-74.01">LA → NYC</button>
-                </div>
-                <div class="saved-routes">
-                    <span class="presets-label">Saved routes:</span>
-                    <div class="saved-routes-row">
-                        <input type="text" id="saved-route-name" placeholder="Route name" aria-label="Name for saved route">
-                        <button type="button" id="save-route">Save current</button>
-                    </div>
-                    <ul id="saved-routes-list" class="saved-routes-list"></ul>
-                </div>
-                <button type="button" id="how-to-use-toggle" class="how-to-use-toggle" aria-expanded="false">How to use</button>
-                <div id="how-to-use-panel" class="how-to-use-panel" hidden>
-                    <ol>
-                        <li>Enter latitude and longitude for <strong>Point A</strong> and <strong>Point B</strong>.</li>
-                        <li>Click <strong>Draw curve</strong> to render the arc on the sphere.</li>
-                        <li><strong>Drag</strong> to rotate the globe, <strong>scroll</strong> to zoom.</li>
-                        <li>Use <strong>Presets</strong> or <strong>Saved routes</strong> for quick examples.</li>
-                        <li>Press <strong>H</strong> or use <strong>Hide panel</strong> to clear the view.</li>
-                    </ol>
-                </div>
-                <div id="message" class="message" aria-live="polite"></div>
-            </div>
+            <figure class="hero-plate">
+                <div class="plate" data-plate="wire" data-a="40.71,-74.01" data-b="51.51,-0.13" data-size="640" data-step="15" data-tilt="22" data-width="3" data-stroke="0.9" data-labels aria-label="Wireframe globe with an arc from New York to London"></div>
+                <figcaption>
+                    <span class="caption"><b>Fig. 1</b> — New York to London</span>
+                    <span class="coords">40.71°N 74.01°W → 51.51°N 0.13°W</span>
+                </figcaption>
+            </figure>
+        </section>
+
+        <div class="stats">
+            <div class="stat"><div class="stat-value">6</div><div class="eyebrow">Preset routes</div></div>
+            <div class="stat"><div class="stat-value">2</div><div class="eyebrow">Points per curve</div></div>
+            <div class="stat"><div class="stat-value">3</div><div class="eyebrow">Plate themes</div></div>
+            <div class="stat"><div class="stat-value">0</div><div class="eyebrow">Build steps</div></div>
         </div>
+
+        <section class="section">
+            <div class="section-head">
+                <h2 class="h2">How a curve is drawn</h2>
+                <a href="method.html" class="btn btn--sm">Read the method →</a>
+            </div>
+            <div class="plates">
+                <article>
+                    <div class="figure"><div class="plate" data-plate="wire" data-center="-20" data-step="30" aria-label="Wireframe globe"></div></div>
+                    <h3 class="plate-title"><span>(a)</span><span>Lat/lon → x, y, z</span></h3>
+                    <p class="caption">Each coordinate is projected onto a sphere of radius r = 20.</p>
+                </article>
+                <article>
+                    <div class="figure"><div class="plate" data-plate="wire" data-a="40.71,-74.01" data-b="51.51,-0.13" data-step="45" data-stroke="0.6" data-control aria-label="Globe showing the Bézier control point above the surface"></div></div>
+                    <h3 class="plate-title"><span>(b)</span><span>Lift the control point</span></h3>
+                    <p class="caption">The midpoint is pushed outward so the arc clears the surface.</p>
+                </article>
+                <article>
+                    <div class="figure"><div class="plate" data-plate="shaded" data-a="48.86,2.35" data-b="35.68,139.69" data-step="0" data-width="4" aria-label="Shaded globe with a thick arc from Paris to Tokyo"></div></div>
+                    <h3 class="plate-title"><span>(c)</span><span>Sweep a tube</span></h3>
+                    <p class="caption">A TubeGeometry follows the curve so it reads at any zoom.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section section--sand section--ruled">
+            <div class="section-head">
+                <div>
+                    <p class="eyebrow">Plate II</p>
+                    <h2 class="h2">Routes, catalogued</h2>
+                </div>
+                <a href="routes.html" class="btn btn--sm">Browse all routes →</a>
+            </div>
+            <div class="thumbs" id="route-thumbs"></div>
+        </section>
+
+        <section class="section section--ruled colophon">
+            <div>
+                <p class="eyebrow">Colophon</p>
+                <h2 class="h2" style="margin-top: 12px;">Built small,<br>on purpose.</h2>
+            </div>
+            <div class="colophon-grid">
+                <div><p class="eyebrow">Rendering</p><p>Three.js r128 with a Lambert-lit sphere, a graticule and TubeGeometry arcs.</p></div>
+                <div><p class="eyebrow">Interaction</p><p>OrbitControls for drag and zoom; press H to hide the panel, D to draw.</p></div>
+                <div><p class="eyebrow">State</p><p>Settings and saved routes persist in localStorage; every route has a shareable link.</p></div>
+                <div><p class="eyebrow">Hosting</p><p>Static files on GitHub Pages — no bundler, no build.</p></div>
+            </div>
+        </section>
     </main>
 
     <footer class="site-footer">
-        <span>Built with <a href="https://threejs.org/" target="_blank" rel="noopener">Three.js</a></span>
-        <a href="README.md" target="_blank" rel="noopener">README</a>
+        <span><b>Bézier Sphere</b> — an interactive study by Kwame Essien.</span>
+        <span class="coords">Three.js r128 · OrbitControls · no build step</span>
+        <nav class="footer-links" aria-label="Footer">
+            <a href="https://github.com/kwameessien/3d-bezier-curve-sphere" target="_blank" rel="noopener">GitHub ↗</a>
+            <a href="https://github.com/kwameessien/3d-bezier-curve-sphere#readme" target="_blank" rel="noopener">README</a>
+        </nav>
     </footer>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three-orbitcontrols@2.110.1/OrbitControls.js"></script>
-    <script src="app.js"></script>
+    <script src="shared.js"></script>
     <script>
       (function() {
-        var CONTROLS_KEY = 'bezierControlsVisible';
-
-        function setControlsVisible(visible) {
-          var $panel = $('#controls-panel');
-          var $btn = $('#toggle-controls');
-          $panel.toggleClass('controls--collapsed', !visible);
-          $btn.attr('aria-expanded', visible);
-          $btn.text(visible ? 'Hide panel' : 'Show panel');
-          try {
-            localStorage.setItem(CONTROLS_KEY, visible ? '1' : '0');
-          } catch (_) {}
-        }
-
-        $(function() {
-          var visible = true;
-          try {
-            visible = localStorage.getItem(CONTROLS_KEY) !== '0';
-          } catch (_) {}
-          setControlsVisible(visible);
-
-          $('#toggle-controls').on('click', function() {
-            setControlsVisible($('#controls-panel').hasClass('controls--collapsed'));
-          });
-
-          $(document).on('keydown', function(e) {
-            if (e.key !== 'h' && e.key !== 'H') return;
-            var tag = (e.target && e.target.tagName) || '';
-            if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target.isContentEditable) return;
-            e.preventDefault();
-            setControlsVisible($('#controls-panel').hasClass('controls--collapsed'));
-          });
-
-          $('#how-to-use-toggle').on('click', function() {
-            var expanded = $(this).attr('aria-expanded') === 'true';
-            $(this).attr('aria-expanded', !expanded);
-            $('#how-to-use-panel').prop('hidden', expanded);
-          });
-        });
+        var BS = window.BezierSphere;
+        document.getElementById('route-thumbs').innerHTML = BS.PRESETS.map(function(p) {
+          return '<a class="thumb" href="' + BS.routeHref(p.a, p.b, p.name) + '">' +
+            '<div class="plate" data-plate="dotted" data-a="' + p.a.join(',') + '" data-b="' + p.b.join(',') + '" data-size="150" data-width="1.8" aria-label="' + BS.escapeHtml(p.name) + '"></div>' +
+            '<span>' + BS.escapeHtml(p.name) + '</span><span>' + BS.formatKm(BS.distanceKm(p.a, p.b)) + '</span></a>';
+        }).join('');
       })();
     </script>
 </body>

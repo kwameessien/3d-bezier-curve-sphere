@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Off the map — Bézier Sphere</title>
+    <script>
+      // This page is served for any missing path, so resolve links from the site root.
+      // On GitHub Pages project sites that root is /<repository>/.
+      (function() {
+        var parts = location.pathname.split('/');
+        var base = /\.github\.io$/.test(location.hostname) && parts.length > 2 ? '/' + parts[1] + '/' : '/';
+        document.write('<base href="' + base + '">');
+      })();
+    </script>
+    <meta name="robots" content="noindex">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Ccircle cx='11' cy='11' r='9.5' fill='%23F6F4EE' stroke='%23141414' stroke-width='1.4'/%3E%3Cpath d='M3.5 14 Q11 -1 18.5 9' fill='none' stroke='%23E0464E' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <a href="index.html" class="brand">
+            <svg class="brand-mark" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9.5" fill="none" stroke="#141414" stroke-width="1.2"/><path d="M3.5 14 Q11 -1 18.5 9" fill="none" stroke="#E0464E" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <span>Bézier Sphere</span>
+            <span class="brand-badge">No. 03</span>
+        </a>
+        <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="main-nav">Menu ≡</button>
+        <nav class="main-nav" id="main-nav" aria-label="Main navigation">
+            <a href="index.html" class="nav-link">Index</a>
+            <a href="visualizer.html" class="nav-link">Visualizer</a>
+            <a href="method.html" class="nav-link">Method</a>
+            <a href="routes.html" class="nav-link">Routes</a>
+            <a href="settings.html" class="nav-link">Settings</a>
+            <a href="https://github.com/kwameessien/3d-bezier-curve-sphere" class="nav-link nav-link--gh" target="_blank" rel="noopener">GitHub ↗</a>
+        </nav>
+    </header>
+
+    <main class="not-found">
+        <div>
+            <p class="eyebrow">Error 404</p>
+            <h1 class="display" style="margin-top: 18px;">Off the <em class="accent">map.</em></h1>
+            <p class="lede">This page isn’t on the globe. The curve you were following may have moved — try the index or draw a new route.</p>
+            <div class="hero-actions" style="margin-top: 0;">
+                <a href="index.html" class="btn btn--primary">Back to the index →</a>
+                <a href="visualizer.html" class="btn">Open the visualizer</a>
+            </div>
+        </div>
+        <div class="plate" data-plate="dotted" data-a="64.15,-21.94" data-b="-33.92,18.42" data-size="420" data-step="30" data-stroke="0.5" data-labels aria-label="Dotted globe with a long arc"></div>
+    </main>
+
+    <script src="shared.js"></script>
+</body>
+</html>

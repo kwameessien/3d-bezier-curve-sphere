@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!--
+      Source for assets/og-image.png (the social preview card).
+      Regenerate by opening this file through a local server at a 1200×630 viewport
+      and saving a screenshot of the page.
+    -->
+    <title>Bézier Sphere — social card</title>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        body {
+            width: 1200px;
+            height: 630px;
+            overflow: hidden;
+        }
+
+        .card {
+            display: grid;
+            grid-template-columns: 1fr 520px;
+            align-items: center;
+            height: 100%;
+            padding: 0 40px 0 72px;
+            border: 1px solid var(--ink);
+        }
+
+        .card .display {
+            font-size: 84px;
+            margin: 22px 0 26px;
+        }
+
+        .card .brand {
+            font-size: 24px;
+        }
+
+        .card .brand-mark {
+            width: 28px;
+            height: 28px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div>
+            <span class="brand">
+                <svg class="brand-mark" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9.5" fill="none" stroke="#141414" stroke-width="1.2"/><path d="M3.5 14 Q11 -1 18.5 9" fill="none" stroke="#E0464E" stroke-width="1.6" stroke-linecap="round"/></svg>
+                <span>Bézier Sphere</span>
+                <span class="brand-badge">No. 03</span>
+            </span>
+            <h1 class="display">Two points<br>on a globe, <em>one</em><br><em class="accent">curve</em> between.</h1>
+            <p class="eyebrow">Interactive · Three.js · Kwame Essien</p>
+        </div>
+        <div class="plate" data-plate="wire" data-a="40.71,-74.01" data-b="51.51,-0.13" data-size="520" data-step="15" data-tilt="22" data-width="3" data-stroke="0.9" data-labels></div>
+    </div>
+    <script src="../shared.js"></script>
+</body>
+</html>

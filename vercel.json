@@ -1,6 +1,3 @@
 {
-  "rewrites": [
-    { "source": "/about", "destination": "/about.html" },
-    { "source": "/settings", "destination": "/settings.html" }
-  ]
+  "cleanUrls": true
 }
